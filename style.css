@@ -1,0 +1,36 @@
+body {
+    overflow: hidden;
+}
+
+.background{
+    height: 80vh;
+    background-image: url("images/background-day.png");
+    background-repeat: repeat-x;
+    background-size:contain;
+    left: 10px;
+    z-index: 1;
+}
+
+.pipe{
+    width: 5vh;
+    position: relative;
+    left: 30vw;
+    top: -50vh;
+    z-index: 2;
+}
+
+.ground{
+    height: 20vh;
+    background-image: url("images/base.png");
+    background-repeat: repeat-x;
+    background-size:contain;
+    z-index: 3;
+}
+
+.bird{
+    width: 5vh;
+    position: relative;
+    left: 30vw;
+    top: -50vh;
+    z-index: 4;
+}
