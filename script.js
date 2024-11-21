@@ -10,34 +10,41 @@ function GetKeyPress(e) {
     console.log(e.keyCode);
     if (e.keyCode == 32) {
         // space
-        FlapBird();
+        FlapBird(45);
     }
 }
 
 function FlapBird(){
     var bird = document.getElementById("bird");
     bird.src = "images/yellowbird-upflap.png";
-    bird.style.transform = 'rotate(-45deg)';
-    Flap();
+    bird.style.transform = `rotate(-45deg)`;
+    rotateBird = 45;
+}
+
+function RotateBird(rotateBird){
+    rotateBird -= 0.2
+    var bird = document.getElementById("bird");
+    bird.style.transform = `rotate(-${rotateBird}deg)`;
+    return rotateBird;
 }
 
 function GetRandom() {
     return Math.floor(Math.random() * 4) + 1;
 }
 
-
-
-function Flap(){
-    var x = 0;
-    var bird = document.getElementById("bird");
-    setInterval(function(){ bird.style.left = x + "px"; x++; }, 1);
-    console.log("dd");
+function MoveBackground(x){
+    var background = document.getElementById('background');
+    x -= 0.05;
+    if (Math.round(x) == -724){
+        x = 0;
+    }
+    background.style.left = x + 'px';
+    return x;
 }
 
-(function(){
-    var x = 0;
-    setInterval(function(){
-        x-=1;
-        document.getElementById("background").css('background-position', x + 'px 0');
-    }, 10);
-})
+var backgroundMove = 0;
+rotateBird = 0;
+setInterval(function(){
+    backgroundMove = MoveBackground(x);
+    rotateBird = RotateBird(rotateBird);
+}, 1);
