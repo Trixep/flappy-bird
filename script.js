@@ -13,15 +13,16 @@ var velocity = 0;
 var started = false;
 var animateCounter = 0;
 var pipes = [];
-var pipeDistance = 200;
+var pipeGap = 200;
 var pipeCounter = 0;
-var canSpawnPipe = true;
 var speed = 1;
 var counter = 0;
+var pipesSpawned = false;
 
 const bird = document.getElementById("bird");
 const ground = document.getElementById("ground");
 const background = document.getElementById("background");
+const originalPipe = document.getElementById('pipes');
 
 document.addEventListener("mousedown", FlapBird);
 document.onkeydown = GetKeyPress;
@@ -126,40 +127,21 @@ function MoveGround(){
 }
 
 function SpawnPipe(){
-    if (!canSpawnPipe){
-        return;
-    }
-    canSpawnPipe = false;
-
-    let random = GetRandom();
-
-    if (pipes.length != 0){
-
-        let pipe1 = pipes[0];
-        let pipe2 = pipes[1];
-
-        console.log(pipe1.width);
-        if (parseFloat(pipe1.style.left) + pipe1.width * (parseInt(pipe1.parentNode.id.replace("pipes", ""), 10) - 1) < -100) {
-            pipe1.style.left = window.innerWidth + "px";
-            pipe2.style.left = window.innerWidth + "px";
-            pipe1.style.top = random + "vh";
-            pipe2.style.top = random + "vh";
-
-            pipes = pipes.slice(2).concat(pipes.slice(0, 2));
-
-            return;
+    for (let i = 0; i < window.innerWidth;){
+        let random = GetRandom();
+  
+        var clone = originalPipe.cloneNode(true);
+        clone.id = "pipes" + ++pipeCounter;
+        originalPipe.parentNode.appendChild(clone);
+    
+        for (const child of clone.children) {
+            child.style.left = window.innerWidth - child.width * (pipeCounter - 1) + "px";
+            child.style.top = random + "vh";
+            pipes.push(child);
         }
-    }
 
-    var original = document.getElementById('pipes');
-    var clone = original.cloneNode(true);
-    clone.id = "pipes" + ++pipeCounter;
-    original.parentNode.appendChild(clone);
-
-    for (const child of clone.children) {
-        child.style.left = window.innerWidth + "px";
-        child.style.top = random + "vh";
-        pipes.push(child);
+        i += pipeGap + pipes[0].width;
+        console.log(i);
     }
 }
 
@@ -171,9 +153,6 @@ function MovePipes(){
 
     let pipe = pipes[pipes.length - 1];
     let currentLeft = parseFloat(pipe.style.left) || 0;
-    if(window.innerWidth - currentLeft > pipeDistance){
-        canSpawnPipe = true;
-    }
 }
 
 function CheckCollision(){
@@ -221,10 +200,15 @@ setInterval(function(){
         return;
     }
     counter = 0;
+    
+    if (!pipesSpawned){
+        SpawnPipe();
+        pipesSpawned = true;
+    }
 
     MoveBackground();
     MoveGround();
-
+    
     if (!started){
         return;
     }
@@ -232,7 +216,6 @@ setInterval(function(){
     Jump();
     Fall();
     RotateBird();
-    SpawnPipe();
     MovePipes();
 }, 1);
 
@@ -243,7 +226,7 @@ setInterval(function(){
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
 const WaitRotate = async () => {
-    await delay(500 * speed);
+    await delay(500);
     
     if (cancel == 1){
         rotateDown = true;
