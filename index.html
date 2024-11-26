@@ -5,13 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flappy Bird</title>
     <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
 </head>
 <body>
     <div class="background" id="background"></div>
-    <div class="ground"></div>
+    <div class="ground" id="ground"></div>
     <img class="bird" id="bird" src="images/yellowbird-midflap.png">
-    <img class="pipe" id="pipe" src="">
+
+    <div class="pipes-holder" id="pipes-holder">
+        <div class="pipes" id="pipes">
+            <img class="pipe pipe-up" id="pipe" src="images/pipe-green.png">
+            <img class="pipe" id="pipe" src="images/pipe-green.png">
+        </div>
+    </div>
     
+    <script src="script.js"></script>
 </body>
 </html>
