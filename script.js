@@ -15,9 +15,10 @@ var animateCounter = 0;
 var pipes = [];
 var pipeGap = 200;
 var pipeCounter = 0;
-var speed = 1;
 var counter = 0;
 var pipesSpawned = false;
+var gameSpeed = 1;
+var pipeSpeed = 1;
 
 const bird = document.getElementById("bird");
 const ground = document.getElementById("ground");
@@ -37,18 +38,29 @@ function GetKeyPress(e) {
 
     if (e.keyCode == 83) {
         // S
-        speed *= 2;
+        gameSpeed *= 2;
         counter = 0;
     }
     
     if (e.keyCode == 68) {
         // D
-        speed /= 2;
+        gameSpeed /= 2;
         counter = 0;
 
-        if (speed < 1){
-            speed = 1;
+        if (gameSpeed < 1){
+            gameSpeed = 1;
         }
+    }
+    
+    if (e.keyCode == 70) {
+        // F
+        pipeSpeed *= 2;
+    }
+    
+    if (e.keyCode == 71) {
+        // G
+        pipeSpeed /= 2;
+        console.log
     }
 }
 
@@ -118,41 +130,63 @@ function MoveBackground(){
 }
 
 function MoveGround(){
-    groundMove -= 0.5;
+    groundMove -= pipeSpeed;
     let resetPoint = ground.clientHeight / 112 * 336;
-    if (Math.round(groundMove) == Math.round(-resetPoint)){
+    if (Math.round(groundMove) < Math.round(-resetPoint)){
         groundMove = 0;
     }
     ground.style.left = groundMove + "px";
 }
 
 function SpawnPipe(){
-    for (let i = 0; i < window.innerWidth;){
+    let pipe = document.getElementById("pipe");
+    let pipesNeeded = Math.ceil(window.innerWidth / (pipe.width + pipeGap))
+
+    for (let i = 0; i < pipesNeeded; i++){
         let random = GetRandom();
   
         var clone = originalPipe.cloneNode(true);
         clone.id = "pipes" + ++pipeCounter;
         originalPipe.parentNode.appendChild(clone);
     
-        for (const child of clone.children) {
-            child.style.left = window.innerWidth - child.width * (pipeCounter - 1) + "px";
-            child.style.top = random + "vh";
-            pipes.push(child);
+        if (i == 0){
+            for (const child of clone.children) {
+                child.style.left = window.innerWidth + "px";
+                child.style.top = random + "vh";
+                pipes.push(child);
+                console.log(i);
+            }
         }
-
-        i += pipeGap + pipes[0].width;
-        console.log(i);
+        else{
+            for (const child of clone.children) {
+                child.style.left = parseFloat(pipes[pipes.length - 2].style.left) + pipeGap + "px";
+                child.style.top = random + "vh";
+                pipes.push(child);
+            }
+        }
     }
 }
 
 function MovePipes(){
-    pipes.forEach(pipe => {
-        let currentLeft = parseFloat(pipe.style.left) || 0;
-        pipe.style.left = (currentLeft - 0.5) + "px";
-    });
+    pipeCounter = 0;
 
-    let pipe = pipes[pipes.length - 1];
-    let currentLeft = parseFloat(pipe.style.left) || 0;
+    for (let i = 0; i < pipes.length; i++){
+        let pipe1 = pipes[i];
+        let pipe2 = pipes[i + 1];
+
+        let currentLeft = parseFloat(pipe1.style.left) || 0;
+        pipe1.style.left = (currentLeft - pipeSpeed) + "px";
+        pipe2.style.left = (currentLeft - pipeSpeed) + "px";
+
+        if (parseFloat(pipe1.style.left) < 0 - pipe1.width * pipeCounter - pipe1.width){
+            pipe1.style.left = parseFloat(pipes[pipes.length - 1].style.left) + pipeGap + (pipes.length / 2 + pipeCounter) * pipe1.width + "px";
+            pipe2.style.left = parseFloat(pipes[pipes.length - 1].style.left) + pipeGap + (pipes.length - pipeCounter) * pipe1.width + "px";
+        }
+
+        pipeCounter += 1;
+        i++;
+    }
+
 }
 
 function CheckCollision(){
@@ -196,7 +230,7 @@ function Animate(){
 
 setInterval(function(){
     counter++
-    if (counter != speed){
+    if (counter != gameSpeed){
         return;
     }
     counter = 0;
