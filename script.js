@@ -154,7 +154,6 @@ function SpawnPipe(){
                 child.style.left = window.innerWidth + "px";
                 child.style.top = random + "vh";
                 pipes.push(child);
-                console.log(i);
             }
         }
         else{
@@ -169,21 +168,27 @@ function SpawnPipe(){
 
 function MovePipes(){
     pipeCounter = 0;
+    widthCounter = 0;
 
     for (let i = 0; i < pipes.length; i++){
         let pipe1 = pipes[i];
         let pipe2 = pipes[i + 1];
+        let random = GetRandom();
 
         let currentLeft = parseFloat(pipe1.style.left) || 0;
         pipe1.style.left = (currentLeft - pipeSpeed) + "px";
         pipe2.style.left = (currentLeft - pipeSpeed) + "px";
 
         if (parseFloat(pipe1.style.left) < 0 - pipe1.width * pipeCounter - pipe1.width){
-            pipe1.style.left = parseFloat(pipes[pipes.length - 1].style.left) + pipeGap + (pipes.length / 2 + pipeCounter) * pipe1.width + "px";
-            pipe2.style.left = parseFloat(pipes[pipes.length - 1].style.left) + pipeGap + (pipes.length - pipeCounter) * pipe1.width + "px";
+            pipe1.style.left = parseFloat(pipes[pipes.length - 1].style.left) + pipeGap + (pipes.length / 2 + widthCounter) * pipe1.width + "px";
+            pipe1.style.top = random + "vh";
+
+            pipe2.style.left = parseFloat(pipes[pipes.length - 1].style.left) + pipeGap + (pipes.length / 2 + widthCounter) * pipe1.width + "px";
+            pipe2.style.top = random + "vh";
         }
 
         pipeCounter += 1;
+        widthCounter += 2;
         i++;
     }
 
@@ -235,7 +240,7 @@ setInterval(function(){
     }
     counter = 0;
     
-    if (!pipesSpawned){
+    if (started && !pipesSpawned){
         SpawnPipe();
         pipesSpawned = true;
     }
