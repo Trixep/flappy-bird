@@ -13,17 +13,22 @@ var velocity = 0;
 var started = false;
 var animateCounter = 0;
 var pipes = [];
+var passedPipes = [];
 var pipeGap = 200;
 var pipeCounter = 0;
 var counter = 0;
 var pipesSpawned = false;
 var gameSpeed = 1;
 var pipeSpeed = 1;
+var isGameOver = false;
+var hittingGround = false;
+var point = 0;
 
 const bird = document.getElementById("bird");
 const ground = document.getElementById("ground");
 const background = document.getElementById("background");
 const originalPipe = document.getElementById('pipes');
+const gameOver = document.getElementById('gameOver');
 
 document.addEventListener("mousedown", FlapBird);
 document.onkeydown = GetKeyPress;
@@ -65,6 +70,12 @@ function GetKeyPress(e) {
 }
 
 function FlapBird(){
+    if (isGameOver){
+        // Restart();
+        return;
+    }
+
+    AddPoint();
     started = true;
 
     bird.style.transform = `rotate(-30deg)`;
@@ -192,12 +203,43 @@ function MovePipes(){
         i++;
     }
 
+
+}
+
+function AddPoint(){
+    numbers = [];
+
+    var childDivs = document.getElementById('numbers').getElementsByClassName('points');
+
+    for (let i = 0; i < childDivs.length; i++){
+        numbers.push(childDivs[i]);
+    }
+
+    point++;
+
+    if (point.toString().length > numbers.length){
+        var clone = numbers[numbers.length - 1].cloneNode(true);
+        numbers[numbers.length - 1].parentNode.appendChild(clone);
+        numbers.push(clone);
+    }
+
+    for (let i = 0; i < numbers.length; i++){
+        numbers[i].src = "images/" + point.toString()[i] + ".png";
+    }
 }
 
 function CheckCollision(){
     if (isColliding(bird, ground)) {
-        console.log("colliding");
+        console.log("colliding ground");
+        Die();
     }
+    
+    pipes.forEach(pipe => {
+        if (isColliding(bird, pipe)){
+            console.log("colliding pipe");
+            Die();
+        }
+    });
 }
 
 function isColliding(x, y) {
@@ -210,6 +252,24 @@ function isColliding(x, y) {
         rect1.bottom < rect2.top ||
         rect1.top > rect2.bottom
     );
+}
+
+function Die(){
+    isGameOver = true;
+    gameOver.style.display = "block";
+}
+
+function Restart(){
+    for (let i = 0; i < pipes.length; i += 2){
+        pipes[i].parentNode.remove();
+    }
+    pipes.splice(0, pipes.length);
+    pipesSpawned = false;
+
+    bird.style.top = -60 + "vh";
+
+    isGameOver = false;
+
 }
 
 function Animate(){
@@ -245,13 +305,16 @@ setInterval(function(){
         pipesSpawned = true;
     }
 
+    if (isGameOver){
+        return;
+    }
     MoveBackground();
     MoveGround();
     
     if (!started){
         return;
     }
-    CheckCollision();
+    // CheckCollision();
     Jump();
     Fall();
     RotateBird();
@@ -259,8 +322,25 @@ setInterval(function(){
 }, 1);
 
 setInterval(function(){
+    if (isGameOver){
+        return;
+    }
     Animate();
 }, 100);
+
+setInterval(function(){
+    if (isGameOver && !hittingGround){
+        if (!isColliding(bird, ground)){
+            velocity += gravity * dt;
+            birdHeight += velocity * dt;
+            bird.style.top = birdHeight + "vh";
+        }
+        else{
+            hittingGround = true;
+        }
+        bird.style.transform = "rotate(90deg)";
+    }
+}, 1);
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
@@ -277,5 +357,5 @@ const WaitRotate = async () => {
 };
 
 function GetRandom() {
-    return Math.random() * (-160 + 187) - 187;
+    return Math.random() * (-170 + 194) - 194;
 }
