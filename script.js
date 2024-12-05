@@ -75,7 +75,6 @@ function FlapBird(){
         return;
     }
 
-    AddPoint();
     started = true;
 
     bird.style.transform = `rotate(-30deg)`;
@@ -174,6 +173,8 @@ function SpawnPipe(){
                 pipes.push(child);
             }
         }
+
+        passedPipes.push(false);
     }
 }
 
@@ -191,11 +192,21 @@ function MovePipes(){
         pipe2.style.left = (currentLeft - pipeSpeed) + "px";
 
         if (parseFloat(pipe1.style.left) < 0 - pipe1.width * pipeCounter - pipe1.width){
+            AddPoint();
             pipe1.style.left = parseFloat(pipes[pipes.length - 1].style.left) + pipeGap + (pipes.length / 2 + widthCounter) * pipe1.width + "px";
             pipe1.style.top = random + "vh";
 
             pipe2.style.left = parseFloat(pipes[pipes.length - 1].style.left) + pipeGap + (pipes.length / 2 + widthCounter) * pipe1.width + "px";
             pipe2.style.top = random + "vh";
+
+            passedPipes[i / 2] = false;
+        }
+        
+        if (parseFloat(pipe1.style.left) < 0 + window.innerWidth / 3 - pipe1.width * pipeCounter - pipe1.width){
+            if (passedPipes[i / 2] == false){
+                passedPipes[i] = true;
+                AddPoint();
+            }
         }
 
         pipeCounter += 1;
@@ -314,7 +325,7 @@ setInterval(function(){
     if (!started){
         return;
     }
-    // CheckCollision();
+    CheckCollision();
     Jump();
     Fall();
     RotateBird();
@@ -357,5 +368,5 @@ const WaitRotate = async () => {
 };
 
 function GetRandom() {
-    return Math.random() * (-170 + 194) - 194;
+    return Math.random() * (-160 + 187) - 187;
 }

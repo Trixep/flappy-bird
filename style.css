@@ -55,7 +55,7 @@ html, body {
 .bird{
     width: 7vh;
     position: relative;
-    left: 30vw;
+    left: 33vw;
     top: -60vh;
     z-index: 4;
 }
@@ -67,18 +67,18 @@ html, body {
     margin-right: auto;
     position: relative;
     z-index: 5;
-    top: -70vh;
+    top: -280vh;
     display:  none;
 }
 
 .points{
-    height: 8vw;
-    position: relative;
+    height: 7vh;
     z-index: 5;
-    top: -95vh;
 }
 
 .numbers{
     display: flex;
     justify-content: center;
+    position: relative;
+    top: -300vh;
 }
