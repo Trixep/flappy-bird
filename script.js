@@ -192,7 +192,6 @@ function MovePipes(){
         pipe2.style.left = (currentLeft - pipeSpeed) + "px";
 
         if (parseFloat(pipe1.style.left) < 0 - pipe1.width * pipeCounter - pipe1.width){
-            AddPoint();
             pipe1.style.left = parseFloat(pipes[pipes.length - 1].style.left) + pipeGap + (pipes.length / 2 + widthCounter) * pipe1.width + "px";
             pipe1.style.top = random + "vh";
 
@@ -204,7 +203,7 @@ function MovePipes(){
         
         if (parseFloat(pipe1.style.left) < 0 + window.innerWidth / 3 - pipe1.width * pipeCounter - pipe1.width){
             if (passedPipes[i / 2] == false){
-                passedPipes[i] = true;
+                passedPipes[i / 2] = true;
                 AddPoint();
             }
         }
@@ -226,7 +225,7 @@ function AddPoint(){
         numbers.push(childDivs[i]);
     }
 
-    point++;
+    point += 1;
 
     if (point.toString().length > numbers.length){
         var clone = numbers[numbers.length - 1].cloneNode(true);
